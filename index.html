@@ -988,71 +988,272 @@
                 return a.timeSeconds - b.timeSeconds;
             });
 
-            const isClosed = checkQuizTimeStatus() === 'CLOSED';
+            entries.slice(0, 30).forEach((item, idx) => {
+                let badgeStyle = "bg-slate-100 text-slate-600 border-slate-200";
+                let rankLabel = `#${idx + 1}`;
 
-            // TOP 3 WINNERS SHOWCASE PODIUM BANNER
-            let podiumHtml = `
-                <div class="mb-4 p-4 bg-gradient-to-br from-amber-500/10 via-amber-50/80 to-emerald-500/10 rounded-2xl border border-amber-300/60 shadow-xs">
-                    <div class="text-center mb-3">
-                        <span class="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-black px-3.5 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1.5 shadow-xs">
-                            <i class="fa-solid fa-trophy text-amber-600"></i>
-                            ${isClosed ? 'Official Winners (10:00 PM Final Result)' : 'Current Top Winners Podium'}
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            `;
+                if(idx === 0) { badgeStyle = "bg-amber-100 text-amber-800 border-amber-300 font-extrabold"; rankLabel = "🥇 1st"; }
+                else if(idx === 1) { badgeStyle = "bg-slate-200 text-slate-800 border-slate-300 font-extrabold"; rankLabel = "🥈 2nd"; }
+                else if(idx === 2) { badgeStyle = "bg-amber-50 text-amber-900 border-amber-200 font-extrabold"; rankLabel = "🥉 3rd"; }
 
-            const top3 = entries.slice(0, 3);
-            const podiumConfigs = [
-                { badge: '🥇 1st Place Winner', border: 'border-amber-400 bg-amber-50/90 text-amber-950', ring: 'ring-2 ring-amber-400', icon: 'fa-crown text-amber-500' },
-                { badge: '🥈 2nd Place Winner', border: 'border-slate-300 bg-slate-50 text-slate-900', ring: '', icon: 'fa-medal text-slate-400' },
-                { badge: '🥉 3rd Place Winner', border: 'border-amber-700/30 bg-amber-900/5 text-amber-950', ring: '', icon: 'fa-award text-amber-700' }
-            ];
-
-            top3.forEach((item, idx) => {
-                const cfg = podiumConfigs[idx];
-                podiumHtml += `
-                    <div class="p-3 rounded-xl border ${cfg.border} ${cfg.ring} text-center flex flex-col justify-between shadow-xs relative overflow-hidden">
-                        <div class="text-xs font-black mb-1 flex items-center justify-center gap-1">
-                            <i class="fa-solid ${cfg.icon}"></i> ${cfg.badge}
+                const itemHtml = `
+                    <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs text-xs sm:text-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="w-12 h-9 rounded-xl flex items-center justify-center border ${badgeStyle}">${rankLabel}</span>
+                            <div>
+                                <p class="font-extrabold text-slate-900">${item.name}</p>
+                                <p class="text-[11px] text-slate-500">${item.dept ? item.dept + ' • ' : ''}${item.correct}/15 Correct • Time: ${item.timeFormatted}</p>
+                            </div>
                         </div>
-                        <p class="font-extrabold text-sm text-slate-900 truncate" title="${item.name}">${item.name}</p>
-                        <p class="text-[10px] text-slate-600 font-semibold truncate">${item.dept || 'Participant'}</p>
-                        <div class="mt-2 pt-1 border-t border-slate-200/60 flex items-center justify-between text-[11px]">
-                            <span class="font-black text-amber-600">${item.score} pts</span>
-                            <span class="text-slate-500 font-bold">${item.timeFormatted}</span>
+                        <div class="text-right">
+                            <span class="font-black text-slate-900 text-base">${item.score}</span>
+                            <span class="text-[10px] text-slate-400 block font-bold">pts</span>
                         </div>
                     </div>
                 `;
+                listElem.innerHTML += itemHtml;
             });
-
-            podiumHtml += `</div></div>`;
-            listElem.innerHTML += podiumHtml;
-
-            // 4TH RANK ONWARDS LIST
-            if(entries.length > 3) {
-                listElem.innerHTML += `<div class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2 px-1">Other Participant Rankings</div>`;
-                entries.slice(3, 30).forEach((item, idx) => {
-                    const realRank = idx + 4;
-                    const itemHtml = `
-                        <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs text-xs sm:text-sm">
-                            <div class="flex items-center gap-3">
-                                <span class="w-12 h-9 rounded-xl flex items-center justify-center border bg-slate-100 text-slate-600 border-slate-200 font-bold">#${realRank}</span>
-                                <div>
-                                    <p class="font-extrabold text-slate-900">${item.name}</p>
-                                    <p class="text-[11px] text-slate-500">${item.dept ? item.dept + ' • ' : ''}${item.correct}/15 Correct • Time: ${item.timeFormatted}</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-black text-slate-900 text-base">${item.score}</span>
-                                <span class="text-[10px] text-slate-400 block font-bold">pts</span>
-                            </div>
-                        </div>
-                    `;
-                    listElem.innerHTML += itemHtml;
-                });
-            }
         }
 
         function populateReviewModal() {
-<!-- ... existing code -->
+            const listElem = document.getElementById('review-list');
+            if (!listElem) return;
+            listElem.innerHTML = '';
+
+            userAnswersHistory.forEach((item, idx) => {
+                const isCorrect = item.selected === item.correct;
+                const userChoiceText = item.options[item.selected];
+                const correctChoiceText = item.options[item.correct];
+
+                const cardHtml = `
+                    <div class="p-3.5 rounded-2xl ${isCorrect ? 'bg-emerald-50/60 border border-emerald-200' : 'bg-rose-50/60 border border-rose-200'} space-y-1.5">
+                        <p class="font-bold text-slate-900 text-xs sm:text-sm">${idx + 1}. ${item.question}</p>
+                        <div class="text-xs space-y-1 pt-1">
+                            <p class="${isCorrect ? 'text-emerald-700 font-bold' : 'text-rose-700 font-bold'}">
+                                <i class="fa-solid ${isCorrect ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1"></i>
+                                Your Answer: ${userChoiceText}
+                            </p>
+                            ${!isCorrect ? `<p class="text-emerald-800 font-bold"><i class="fa-solid fa-check mr-1"></i>Correct Answer: ${correctChoiceText}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                listElem.innerHTML += cardHtml;
+            });
+        }
+
+        /* -------------------------------------------------------------
+           8. HIDDEN ADMIN PANEL LOGIC
+        ------------------------------------------------------------- */
+        let adminClickCounter = 0;
+        let adminClickTimer = null;
+        const ADMIN_PIN = "3063"; // NSS Units 30 & 63
+
+        function handleAdminSecretTrigger() {
+            adminClickCounter++;
+            clearTimeout(adminClickTimer);
+            
+            if (adminClickCounter >= 5) {
+                adminClickCounter = 0;
+                openAdminModal();
+            } else {
+                adminClickTimer = setTimeout(() => {
+                    adminClickCounter = 0;
+                }, 2000);
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('admin-pin-input').value = '';
+            document.getElementById('admin-error-text').classList.add('hidden');
+            document.getElementById('admin-login-screen').classList.remove('hidden');
+            document.getElementById('admin-dashboard-screen').classList.add('hidden');
+            document.getElementById('modal-admin').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('modal-admin').classList.add('hidden');
+        }
+
+        function verifyAdminPin() {
+            const inputPin = document.getElementById('admin-pin-input').value.trim();
+            if (inputPin === ADMIN_PIN) {
+                document.getElementById('admin-login-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard-screen').classList.remove('hidden');
+                loadAdminDashboardData();
+            } else {
+                document.getElementById('admin-error-text').classList.remove('hidden');
+            }
+        }
+
+        function toggleAdminTimeOverride() {
+            adminTimeOverride = !adminTimeOverride;
+            const btn = document.getElementById('btn-toggle-time-override');
+            if (btn) {
+                btn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> Time Override: ${adminTimeOverride ? 'ON (TEST)' : 'OFF'}`;
+                btn.className = adminTimeOverride ? "bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition" : "bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold transition";
+            }
+            updateTimeLockUI();
+        }
+
+        function loadAdminDashboardData() {
+            const listElem = document.getElementById('admin-entries-list');
+            if (!listElem) return;
+
+            listElem.innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-sm">
+                    <i class="fa-solid fa-circle-notch fa-spin text-saffron text-xl mb-2"></i>
+                    <p>Loading entries for admin review...</p>
+                </div>
+            `;
+
+            if (db) {
+                db.collection("quiz_submissions").get().then((snapshot) => {
+                    let entries = [];
+                    snapshot.forEach((doc) => {
+                        let data = doc.data();
+                        data._docId = doc.id;
+                        entries.push(data);
+                    });
+                    
+                    if (entries.length === 0) {
+                        entries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                    }
+
+                    renderAdminEntries(entries);
+                }).catch((err) => {
+                    console.error("Error fetching admin entries:", err);
+                    let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                    renderAdminEntries(localEntries);
+                });
+            } else {
+                let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                renderAdminEntries(localEntries);
+            }
+        }
+
+        function renderAdminEntries(entries) {
+            const listElem = document.getElementById('admin-entries-list');
+            if (!listElem) return;
+            listElem.innerHTML = '';
+
+            document.getElementById('admin-total-entries').textContent = entries.length;
+
+            if (entries.length === 0) {
+                listElem.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No submissions in database.</div>`;
+                document.getElementById('admin-top-score').textContent = "0 pts";
+                return;
+            }
+
+            entries.sort((a, b) => b.score - a.score || a.timeSeconds - b.timeSeconds);
+            document.getElementById('admin-top-score').textContent = `${entries[0].score} pts`;
+
+            entries.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = "flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs";
+                card.innerHTML = `
+                    <div class="space-y-0.5">
+                        <p class="font-extrabold text-slate-900">${idx + 1}. ${item.name} <span class="text-slate-500 font-normal">(${item.dept || 'N/A'})</span></p>
+                        <p class="text-[11px] text-slate-500">Contact: <strong>${item.contact || 'N/A'}</strong> • Score: <strong class="text-emerald-600">${item.score} pts</strong> (${item.correct}/15) • Time: ${item.timeFormatted}</p>
+                    </div>
+                    <button onclick="deleteSingleEntry('${item._docId || ''}', ${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2.5 py-1.5 rounded-lg font-extrabold transition">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                `;
+                listElem.appendChild(card);
+            });
+        }
+
+        function deleteSingleEntry(docId, localIdx) {
+            if (!confirm("Are you sure you want to delete this submission entry?")) return;
+
+            if (db && docId) {
+                db.collection("quiz_submissions").doc(docId).delete().then(() => {
+                    loadAdminDashboardData();
+                    renderLeaderboard();
+                }).catch((err) => {
+                    console.error("Firestore delete error:", err);
+                });
+            }
+
+            let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+            localLb.splice(localIdx, 1);
+            localStorage.setItem('mgc_quit_india_lb', JSON.stringify(localLb));
+
+            if (!docId) {
+                loadAdminDashboardData();
+                renderLeaderboard();
+            }
+        }
+
+        function clearAllServerData() {
+            if (!confirm("⚠️ WARNING: This will permanently delete ALL submissions! Continue?")) return;
+
+            if (db) {
+                db.collection("quiz_submissions").get().then((snapshot) => {
+                    let batch = db.batch();
+                    snapshot.forEach((doc) => {
+                        batch.delete(doc.ref);
+                    });
+                    return batch.commit();
+                }).then(() => {
+                    localStorage.removeItem('mgc_quit_india_lb');
+                    loadAdminDashboardData();
+                    renderLeaderboard();
+                }).catch((err) => {
+                    console.error("Batch delete error:", err);
+                    localStorage.removeItem('mgc_quit_india_lb');
+                    loadAdminDashboardData();
+                });
+            } else {
+                localStorage.removeItem('mgc_quit_india_lb');
+                loadAdminDashboardData();
+            }
+        }
+
+        function exportSubmissionsCSV() {
+            let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+            
+            if (db) {
+                db.collection("quiz_submissions").get().then((snapshot) => {
+                    let entries = [];
+                    snapshot.forEach((doc) => entries.push(doc.data()));
+                    if (entries.length > 0) localLb = entries;
+                    downloadCSVProcess(localLb);
+                }).catch(() => downloadCSVProcess(localLb));
+            } else {
+                downloadCSVProcess(localLb);
+            }
+        }
+
+        function downloadCSVProcess(data) {
+            if (data.length === 0) {
+                alert("No submission data available to export.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Name,Contact,Department,Score,Correct,Time_Taken\n";
+            data.forEach(row => {
+                csvContent += `"${row.name}","${row.contact}","${row.dept}",${row.score},${row.correct},"${row.timeFormatted}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "MGC_Quit_India_Quiz_Results.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // MODAL TOGGLES
+        function toggleLeaderboardModal(show) {
+            if(show) renderLeaderboard();
+            document.getElementById('modal-leaderboard').classList.toggle('hidden', !show);
+        }
+
+        function toggleReviewModal(show) {
+            document.getElementById('modal-review').classList.toggle('hidden', !show);
+        }
+    </script>
+</body>
+</html>
