@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quit India Day National Quiz - NSS Units 30 & 63 | MG College Iritty</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manjari:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Firebase SDK (Compat Version for Web Browsers) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        saffron: '#FF7A00',
+                        saffronLight: '#FFF7ED',
+                        indiaGreen: '#128807',
+                        indiaGreenLight: '#F0FDF4',
+                        navyBlue: '#0A192F',
+                        chakraBlue: '#000080',
+                        nssBlue: '#002B49',
+                        nssRed: '#D32F2F',
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Manjari"', 'sans-serif'],
+                        ml: ['"Manjari"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8FAFC;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 122, 0, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(18, 136, 7, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(0, 0, 128, 0.03) 0px, transparent 70%);
+            color: #0F172A;
+            min-height: 100vh;
+        }
+        .white-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
+        }
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover:not(:disabled) {
+            border-color: #FF7A00;
+            background-color: #FFF7ED;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 122, 0, 0.12);
+        }
+        .option-card.selected {
+            border-color: #FF7A00;
+            background-color: #FFEDD5;
+            color: #9A3412;
+            box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased flex flex-col justify-between min-h-screen">
+
+    <!-- Top Tricolor Ribbon Gradient -->
+    <div class="h-2 w-full bg-gradient-to-r from-saffron via-white via-chakraBlue to-indiaGreen sticky top-0 z-50"></div>
+
+    <!-- Header Navigation Bar -->
+    <header class="w-full bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-2 z-40 px-4 py-3 shadow-sm">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <!-- Branding with College & NSS Logo Placement -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center -space-x-1 sm:space-x-2">
+                    <!-- College Logo Place -->
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="./college-logo.png" alt="MGC Iritty Logo" 
+                             class="w-full h-full object-contain p-0.5"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'text-[10px] font-black text-slate-800 text-center leading-tight\'>MGC</div>';">
+                    </div>
+                    <!-- NSS Logo Place -->
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-nssBlue border-2 border-amber-400 flex items-center justify-center overflow-hidden shadow-md">
+                        <img src="./nss-logo.png" alt="NSS Logo" 
+                             class="w-full h-full object-contain p-0.5"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'font-black text-amber-400 text-xs\'>NSS</span>';">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h1 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">MAHATMA GANDHI COLLEGE, IRITTY</h1>
+                        <span class="text-[10px] font-extrabold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">UNITS 30 & 63</span>
+                    </div>
+                    <p class="text-[11px] font-bold text-saffron flex items-center gap-1">
+                        <i class="fa-solid fa-flag text-[10px]"></i>
+                        National Service Scheme • Quit India Day Quiz
+                    </p>
+                </div>
+            </div>
+
+            <!-- Leaderboard Trigger -->
+            <button onclick="toggleLeaderboardModal(true)" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                <i class="fa-solid fa-trophy text-amber-500"></i>
+                <span class="hidden sm:inline">Leaderboard</span>
+            </button>
+        </div>
+    </header>
+
+
+    <!-- Main Content Area -->
+    <main class="max-w-3xl mx-auto w-full px-4 py-8 flex-grow flex flex-col justify-center">
+
+        <!-- 1. REGISTRATION SCREEN -->
+        <div id="screen-register" class="white-card rounded-3xl p-6 sm:p-10 relative overflow-hidden border-t-4 border-t-saffron">
+            
+            <!-- Patriotic Emblem Header -->
+            <div class="flex items-center justify-center gap-4 mb-6">
+                <img src="./college-logo.png" alt="MG College Logo" class="w-14 h-14 object-contain drop-shadow-sm"
+                     onerror="this.style.display='none'">
+                <div class="h-8 w-px bg-slate-200"></div>
+                <div class="w-12 h-12 rounded-full border border-chakraBlue/20 flex items-center justify-center bg-blue-50 text-chakraBlue text-xl">
+                    <i class="fa-solid fa-dharmachakra animate-spin-slow"></i>
+                </div>
+                <div class="h-8 w-px bg-slate-200"></div>
+                <img src="./nss-logo.png" alt="NSS Logo" class="w-14 h-14 object-contain drop-shadow-sm"
+                     onerror="this.style.display='none'">
+            </div>
+
+            <!-- Event Sub-Badge -->
+            <div class="flex justify-center mb-3">
+                <span class="inline-flex items-center gap-2 bg-slate-100 border border-slate-200 text-slate-800 text-xs px-4 py-1.5 rounded-full font-bold shadow-xs">
+                    <span class="w-2.5 h-2.5 rounded-full bg-saffron animate-pulse"></span>
+                    August 9 Commemoration Contest
+                    <span class="w-2.5 h-2.5 rounded-full bg-indiaGreen"></span>
+                </span>
+            </div>
+
+            <div class="text-center mb-8">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Quit India Movement Quiz</h2>
+                <p class="text-sm text-slate-600 max-w-lg mx-auto">Organized by <strong>NSS Units 30 & 63</strong>, Mahatma Gandhi College, Iritty to commemorate the historic 1942 movement.</p>
+            </div>
+
+            <!-- Rules Box -->
+            <div class="bg-slate-50 rounded-2xl p-5 mb-6 border border-slate-200 space-y-2.5 text-xs sm:text-sm text-slate-700">
+                <div class="flex items-center gap-2 text-slate-900 font-extrabold text-sm mb-1">
+                    <i class="fa-solid fa-shield-halved text-saffron"></i> Anti-Cheating & Contest Rules:
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                    <div class="flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                        <i class="fa-solid fa-list-check text-saffron mt-0.5"></i>
+                        <span><strong>15 Questions</strong> in Malayalam.</span>
+                    </div>
+                    <div class="flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                        <i class="fa-solid fa-hourglass-half text-amber-600 mt-0.5"></i>
+                        <span>Strict <strong>5-Minute Total Time Limit</strong> for the entire quiz.</span>
+                    </div>
+                    <div class="flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                        <i class="fa-solid fa-eye-slash text-rose-600 mt-0.5"></i>
+                        <span><strong>No Tab Switching:</strong> Leaving the quiz window triggers auto-submission.</span>
+                    </div>
+                    <div class="flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                        <i class="fa-solid fa-trophy text-amber-500 mt-0.5"></i>
+                        <span>Highest score wins. Lowest time breaks ties.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participant Registration Form -->
+            <form id="form-register" onsubmit="startQuiz(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Full Name *</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-400"></i>
+                        <input type="text" id="user-name" required placeholder="Enter your full name"
+                            class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-saffron focus:ring-2 focus:ring-saffron/20 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Mobile Number *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-3.5 text-slate-400"></i>
+                            <input type="tel" id="user-contact" required placeholder="10-digit mobile number"
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-saffron focus:ring-2 focus:ring-saffron/20 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Department / Batch *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-graduation-cap absolute left-4 top-3.5 text-slate-400"></i>
+                            <input type="text" id="user-dept" required placeholder="e.g. B.Com / BSc Chemistry / Vol."
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-saffron focus:ring-2 focus:ring-saffron/20 transition">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                    class="w-full mt-3 bg-gradient-to-r from-saffron via-amber-500 to-saffron hover:from-saffron hover:to-amber-600 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-saffron/25 transition transform active:scale-[0.99] text-sm tracking-wide">
+                    Start Quiz Competition <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </form>
+        </div>
+
+
+        <!-- 2. QUIZ SCREEN -->
+        <div id="screen-quiz" class="hidden white-card rounded-3xl p-5 sm:p-8 relative border-t-4 border-t-saffron">
+            <!-- Top Status Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
+                <!-- Question Number -->
+                <div>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Question</span>
+                    <div class="text-lg font-extrabold text-slate-900">
+                        <span id="current-q-num" class="text-saffron">1</span><span class="text-slate-400 text-sm"> / 15</span>
+                    </div>
+                </div>
+
+                <!-- Live Stopwatch -->
+                <div class="bg-slate-100 border border-slate-200 px-4 py-1.5 rounded-2xl flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-stopwatch text-indigo-600 text-sm animate-pulse"></i>
+                    <div class="text-right">
+                        <span class="block text-[9px] font-bold text-slate-400 uppercase">Time Elapsed</span>
+                        <span id="timer-text" class="font-mono font-extrabold text-sm text-slate-900">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Live Points -->
+                <div class="text-right">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Score</span>
+                    <div id="user-score" class="text-lg font-extrabold text-emerald-600">0 pts</div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-6">
+                <div id="quiz-progress-bar" class="bg-gradient-to-r from-saffron to-emerald-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Malayalam Question Display (Protected against selection/copying) -->
+            <div class="mb-6 select-none" oncopy="return false" oncut="return false" oncontextmenu="return false">
+                <h3 id="question-text" class="font-ml text-lg sm:text-xl font-bold text-slate-900 leading-relaxed min-h-[64px] select-none">
+                    ചോദ്യം ഇവിടെ കാണിക്കും...
+                </h3>
+            </div>
+
+            <!-- Malayalam Options Grid (Protected against selection) -->
+            <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 select-none" oncopy="return false" oncontextmenu="return false">
+                <!-- Dynamic Options -->
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+                <span id="participant-display-name" class="text-xs font-bold text-slate-500"></span>
+                <button id="btn-next" onclick="handleNextClick()" disabled
+                    class="bg-slate-200 text-slate-400 font-extrabold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-2 cursor-not-allowed">
+                    <span>Next Question</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- 3. RESULT SCREEN -->
+        <div id="screen-result" class="hidden white-card rounded-3xl p-6 sm:p-10 text-center border-t-4 border-t-emerald-600">
+            <div class="w-20 h-20 bg-emerald-100 border-2 border-emerald-300 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600 text-3xl shadow-sm">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1">Quiz Completed!</h2>
+            <p id="result-user-name" class="text-saffron font-bold text-base mb-1">Participant Name</p>
+            <p id="firebase-sync-status" class="text-xs font-semibold text-emerald-600 mb-6"><i class="fa-solid fa-cloud-check mr-1"></i>Score saved to Firebase Leaderboard</p>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Total Score</p>
+                    <p id="final-score" class="text-2xl font-black text-slate-900">0</p>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Correct Answers</p>
+                    <p id="final-correct" class="text-2xl font-black text-emerald-600">0/15</p>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Accuracy</p>
+                    <p id="final-accuracy" class="text-2xl font-black text-indigo-600">0%</p>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Time Elapsed</p>
+                    <p id="final-time" class="text-2xl font-black text-amber-600">00:00</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="toggleReviewModal(true)" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold py-3 rounded-xl transition text-sm">
+                    <i class="fa-solid fa-list-check mr-2"></i> Review Answer Key
+                </button>
+                <button onclick="toggleLeaderboardModal(true)" class="flex-1 bg-gradient-to-r from-saffron to-amber-500 text-white font-extrabold py-3 rounded-xl shadow-lg transition text-sm">
+                    <i class="fa-solid fa-trophy mr-2"></i> View Leaderboard
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 bg-white">
+        Organized by <strong>NSS Units 30 & 63</strong> • Mahatma Gandhi College, Iritty
+    </footer>
+
+
+    <!-- MODAL 1: LEADERBOARD -->
+    <div id="modal-leaderboard" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="white-card max-w-lg w-full rounded-3xl p-6 relative max-h-[85vh] flex flex-col shadow-2xl">
+            <button onclick="toggleLeaderboardModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Live Firebase Leaderboard</h3>
+                    <p class="text-xs text-slate-500">Sorted by highest score & minimum completion time</p>
+                </div>
+            </div>
+
+            <div class="overflow-y-auto flex-grow pr-1 space-y-2" id="leaderboard-list">
+                <div class="text-center py-8 text-slate-400 text-sm">
+                    <i class="fa-solid fa-circle-notch fa-spin text-saffron text-xl mb-2"></i>
+                    <p>Loading leaderboard entries...</p>
+                </div>
+            </div>
+
+            <button onclick="toggleLeaderboardModal(false)" class="mt-4 w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-sm transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+
+    <!-- MODAL 2: ANSWER KEY REVIEW -->
+    <div id="modal-review" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="white-card max-w-xl w-full rounded-3xl p-6 relative max-h-[85vh] flex flex-col shadow-2xl">
+            <button onclick="toggleReviewModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+    <!-- MODAL 3: ANTI-CHEAT WARNING NOTIFICATION -->
+    <div id="modal-cheat-warning" class="hidden fixed inset-0 z-50 bg-rose-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="white-card max-w-md w-full rounded-3xl p-6 text-center border-2 border-rose-500 shadow-2xl">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-3 animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1">Warning: Tab Switch Detected!</h3>
+            <p id="cheat-warning-text" class="text-xs text-slate-600 mb-5">Switching tabs or minimizing the browser is strictly prohibited during the quiz competition.</p>
+            <button onclick="dismissCheatWarning()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                I Understand & Resume Quiz
+            </button>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT APPLICATION LOGIC & FIREBASE -->
+    <script>
+        /* -------------------------------------------------------------
+           1. FIREBASE INITIALIZATION USING YOUR CREDENTIALS
+        ------------------------------------------------------------- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyCbHGLK1lfS3mOpqUT09mJZz7y1ls0mIDU",
+            authDomain: "nss-c668d.firebaseapp.com",
+            projectId: "nss-c668d",
+            storageBucket: "nss-c668d.firebasestorage.app",
+            messagingSenderId: "434331628101",
+            appId: "1:434331628101:web:f4d61e013880ff69a7292c",
+            measurementId: "G-81JXMC436H"
+        };
+
+        // Initialize Firestore Database Connection
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log("Firebase Firestore initialized successfully!");
+        } catch(err) {
+            console.error("Firebase Initialization Error:", err);
+        }
+
+        /* -------------------------------------------------------------
+           2. 15 MALAYALAM QUIT INDIA QUIZ QUESTIONS & ACCURATE ANSWERS
+        ------------------------------------------------------------- */
+        const quizQuestions = [
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ സമരം ആരംഭിച്ച വർഷം ഏതാണ്?",
+                options: ["1930", "1942", "1947", "1922"],
+                answer: 1 // 1942
+            },
+            {
+                question: "'പ്രവർത്തിക്കുക അല്ലെങ്കിൽ മരിക്കുക' (Do or Die) എന്ന പ്രശസ്തമായ മുദ്രാവാക്യം ഗാന്ധിജി ഉയർത്തിയത് ഏത് സമരവുമായി ബന്ധപ്പെട്ടാണ്?",
+                options: ["അസഹകരണ സമരം", "ഉപ്പുസത്യാഗ്രഹം", "ക്വിറ്റ് ഇന്ത്യ സമരം", "ഖിലാഫത്ത് പ്രസ്ഥാനം"],
+                answer: 2 // ക്വിറ്റ് ഇന്ത്യ സമരം
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ പ്രമേയം പാസാക്കിയ എ.ഐ.സി.സി (AICC) സമ്മേളനം നടന്ന സ്ഥലം ഏതാണ്?",
+                options: ["ബോംബെ (ഗൊവാലിയ ടാങ്ക് മൈതാനം)", "കൊൽക്കത്ത", "ഡൽഹി", "മദ്രാസ്"],
+                answer: 0 // ബോംബെ
+            },
+            {
+                question: "'ക്വിറ്റ് ഇന്ത്യ സമരത്തിന്റെ നായിക' (Heroine of 1942 Movement) എന്നറിയപ്പെടുന്നത് ആര്?",
+                options: ["സരോജിനി നായിഡു", "അരുണ ആസഫ് അലി", "കസ്തൂർബാ ഗാന്ധി", "ക്യാപ്റ്റൻ ലക്ഷ്മി"],
+                answer: 1 // അരുണ ആസഫ് അലി
+            },
+            {
+                question: "'ക്വിറ്റ് ഇന്ത്യ' (Quit India) എന്ന പദം ആദ്യമായി നിർദ്ദേശിച്ച/രൂപപ്പെടുത്തിയ വ്യക്തി ആര്?",
+                options: ["യൂസഫ് മെഹർ അലി", "ജവാഹർലാൽ നെഹ്റു", "ബി. ആർ. അംബേദ്കർ", "സുഭാഷ് ചന്ദ്രബോസ്"],
+                answer: 0 // യൂസഫ് മെഹർ അലി
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ സമരകാലത്ത് രഹസ്യമായി 'കോൺഗ്രസ് റേഡിയോ' (Underground Radio) പ്രവർത്തിപ്പിച്ച ധീര വനിത ആര്?",
+                options: ["പ്രീതിലത വദ്ദേദാർ", "ഉഷ മേത്ത", "മാതംഗിനി ഹസ്ര", "സുചേത കൃപലാനി"],
+                answer: 1 // ഉഷ മേത്ത
+            },
+            {
+                question: "1942-ൽ ക്വിറ്റ് ഇന്ത്യ സമരം നടക്കുമ്പോൾ ഇന്ത്യയിലെ ബ്രിട്ടീഷ് വൈസ്രോയ് ആരായിരുന്നു?",
+                options: ["മൗണ്ട്ബാറ്റൺ പ്രഭു", "ലിൻലിത്ഗൊ പ്രഭു", "കർസൺ പ്രഭു", "ഇർവിൻ പ്രഭു"],
+                answer: 1 // ലിൻലിത്ഗൊ പ്രഭു
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ പ്രമേയത്തിന്റെ കരട് (Draft) തയ്യാറാക്കിയത് ആരാണ്?",
+                options: ["മഹാത്മാ ഗാന്ധി", "ജവാഹർലാൽ നെഹ്റു", "ഡോ. രാജേന്ദ്ര പ്രസാദ്", "സർദാർ പട്ടേൽ"],
+                answer: 1 // ജവാഹർലാൽ നെഹ്റു
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ സമരത്തെ തുടർന്ന് ഗാന്ധിജിയെ ബ്രിട്ടീഷുകാർ തടങ്കലിൽ പാർപ്പിച്ചത് എവിടെയാണ്?",
+                options: ["യെർവാഡ ജയിൽ", "തിഹാർ ജയിൽ", "ആഗാ ഖാൻ കൊട്ടാരം (പൂനെ)", "സെല്ലുലാർ ജയിൽ"],
+                answer: 2 // ആഗാ ഖാൻ കൊട്ടാരം
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ സമരകാലത്ത് ബ്രിട്ടനിലെ പ്രധാനമന്ത്രി ആരായിരുന്നു?",
+                options: ["വിൻസ്റ്റൺ ചർച്ചിൽ", "ക്ലെമന്റ് ആറ്റ്ലി", "രാംസെ മക്ഡൊണാൾഡ്", "ഹാറോൾഡ് മക്മില്ലൻ"],
+                answer: 0 // വിൻസ്റ്റൺ ചർച്ചിൽ
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ സമരവുമായി ബന്ധപ്പെട്ട് കേരളത്തിൽ നടന്ന പ്രശസ്തമായ സംഭവം ഏതാണ്?",
+                options: ["കയ്യൂർ സമരം", "കീഴരിയൂർ ബോംബ് കേസ്", "വാഗണർ ട്രാജഡി", "കടയ്ക്കൽ വിപ്ലവം"],
+                answer: 1 // കീഴരിയൂർ ബോംബ് കേസ്
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ സമരകാലത്ത് ഗൊവാലിയ ടാങ്ക് മൈതാനത്ത് ദേശീയ പതാക ഉയർത്തിയ ധീര വനിത ആര്?",
+                options: ["അരുണ ആസഫ് അലി", "സരോജിനി നായിഡു", "വിജയലക്ഷ്മി പണ്ഡിറ്റ്", "കമലാദേവി ചട്ടോപാധ്യായ"],
+                answer: 0 // അരുണ ആസഫ് അലി
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ പ്രമേയം പാസാക്കുന്ന സമയത്ത് ഇന്ത്യൻ നാഷണൽ കോൺഗ്രസിന്റെ പ്രസിഡന്റ് ആരായിരുന്നു?",
+                options: ["മൗലാനാ അബുൽ കലാം ആസാദ്", "ജെ. ബി. കൃപലാനി", "സുഭാഷ് ചന്ദ്രബോസ്", "പുരുഷോത്തം ദാസ് ടണ്ഠൻ"],
+                answer: 0 // മൗലാനാ അബുൽ കലാം ആസാദ്
+            },
+            {
+                question: "1942-ൽ അസമിൽ ക്വിറ്റ് ഇന്ത്യ സമരത്തിനിടെ പതാക ഉയർത്താൻ ശ്രമിക്കവേ രക്തസാക്ഷിത്വം വരിച്ച 17 വയസ്സുള്ള പെൺകുട്ടി ആര്?",
+                options: ["കനകലത ബറുവ", "റാണി ഗൈഡിൻല്യൂ", "ഭോഗേശ്വരി ഫുകനാനി", "മാതംഗിനി ഹസ്ര"],
+                answer: 0 // കനകലത ബറുവ
+            },
+            {
+                question: "ക്വിറ്റ് ഇന്ത്യ ദിനമായി ഭാരതത്തിൽ ആചരിക്കുന്നത് എപ്പോഴാണ്?",
+                options: ["ഓഗസ്റ്റ് 15", "ഓഗസ്റ്റ് 9", "ജനുവരി 26", "ഒക്ടോബർ 2"],
+                answer: 1 // ഓഗസ്റ്റ് 9
+            }
+        ];
+
+        /* -------------------------------------------------------------
+           3. STATE VARIABLES & QUIZ FLOW LOGIC
+        ------------------------------------------------------------- */
+        const TOTAL_QUIZ_TIME_SECONDS = 300; // 5 Minutes total countdown
+        let currentQuestionIndex = 0;
+        let userScore = 0;
+        let correctAnswersCount = 0;
+        let userAnswersHistory = [];
+        let selectedOptionIndex = null;
+        let totalElapsedSeconds = 0;
+        let countdownSecondsLeft = TOTAL_QUIZ_TIME_SECONDS;
+        let timerInterval = null;
+        let tabSwitchCount = 0;
+        let isQuizActive = false;
+
+        let currentUser = {
+            name: '',
+            contact: '',
+            dept: ''
+        };
+
+        // ANTI-CHEATING TAB SWITCH & BLUR LISTENERS
+        document.addEventListener('visibilitychange', () => {
+            if (isQuizActive && document.hidden) {
+                handleCheatingViolation();
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            if (isQuizActive) {
+                handleCheatingViolation();
+            }
+        });
+
+        function handleCheatingViolation() {
+            if(!isQuizActive) return;
+            tabSwitchCount++;
+            
+            if(tabSwitchCount >= 2) {
+                // Auto submit on second violation
+                alert("Quiz auto-submitted due to repeated tab switching or app backgrounding!");
+                finishQuiz();
+            } else {
+                document.getElementById('cheat-warning-text').textContent = "Warning 1/2: Tab switching or minimizing browser is not allowed! Next violation will auto-submit your quiz.";
+                document.getElementById('modal-cheat-warning').classList.remove('hidden');
+            }
+        }
+
+        function dismissCheatWarning() {
+            document.getElementById('modal-cheat-warning').classList.add('hidden');
+        }
+
+        // START QUIZ
+        function startQuiz(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('user-name').value.trim();
+            const contactInput = document.getElementById('user-contact').value.trim();
+            const deptInput = document.getElementById('user-dept').value.trim();
+
+            if(!nameInput || !contactInput || !deptInput) return;
+
+            currentUser.name = nameInput;
+            currentUser.contact = contactInput;
+            currentUser.dept = deptInput;
+
+            document.getElementById('participant-display-name').textContent = `Participant: ${currentUser.name}`;
+
+            // Switch Screen
+            document.getElementById('screen-register').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+
+            currentQuestionIndex = 0;
+            userScore = 0;
+            correctAnswersCount = 0;
+            userAnswersHistory = [];
+            totalElapsedSeconds = 0;
+            countdownSecondsLeft = TOTAL_QUIZ_TIME_SECONDS;
+            tabSwitchCount = 0;
+            isQuizActive = true;
+
+            startCountdownTimer();
+            loadQuestion();
+        }
+
+        // 5-MINUTE COUNTDOWN TIMER
+        function startCountdownTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                totalElapsedSeconds++;
+                countdownSecondsLeft--;
+
+                const mins = String(Math.floor(countdownSecondsLeft / 60)).padStart(2, '0');
+                const secs = String(countdownSecondsLeft % 60).padStart(2, '0');
+                
+                const timerElem = document.getElementById('timer-text');
+                timerElem.textContent = `${mins}:${secs}`;
+
+                if(countdownSecondsLeft <= 60) {
+                    timerElem.classList.add('text-rose-600', 'animate-pulse');
+                }
+
+                // Auto-submit when time expires
+                if(countdownSecondsLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time is up! Your quiz is being submitted automatically.");
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        // FINISH QUIZ & SYNC TO FIREBASE
+        function finishQuiz() {
+            isQuizActive = false;
+            clearInterval(timerInterval);
+
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            const accuracy = Math.round((correctAnswersCount / quizQuestions.length) * 100);
+            const minsTaken = String(Math.floor(totalElapsedSeconds / 60)).padStart(2, '0');
+            const secsTaken = String(totalElapsedSeconds % 60).padStart(2, '0');
+            const formattedTime = `${minsTaken}:${secsTaken}`;
+
+            document.getElementById('result-user-name').textContent = `${currentUser.name} (${currentUser.dept})`;
+            document.getElementById('final-score').textContent = userScore;
+            document.getElementById('final-correct').textContent = `${correctAnswersCount} / ${quizQuestions.length}`;
+            document.getElementById('final-accuracy').textContent = `${accuracy}%`;
+            document.getElementById('final-time').textContent = formattedTime;
+
+            // Trigger Confetti Celebration for high accuracy
+            if(accuracy >= 60) {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            // Sync to Firebase
+            saveToFirebase({
+                name: currentUser.name,
+                contact: currentUser.contact,
+                dept: currentUser.dept,
+                score: userScore,
+                correct: correctAnswersCount,
+                timeSeconds: totalElapsedSeconds,
+                timeFormatted: formattedTime,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            populateReviewModal();
+        }
+
+        /* -------------------------------------------------------------
+           4. FIREBASE PERSISTENCE & LEADERBOARD LOGIC
+        ------------------------------------------------------------- */
+        
+        function saveToFirebase(entry) {
+            // Local Backup
+            let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+            localLb.push(entry);
+            localStorage.setItem('mgc_quit_india_lb', JSON.stringify(localLb));
+
+            // Firestore Push
+            if(db) {
+                db.collection("quiz_submissions").add(entry).then((docRef) => {
+                    console.log("Record successfully added to Firebase Document ID:", docRef.id);
+                    document.getElementById('firebase-sync-status').innerHTML = `<i class="fa-solid fa-cloud-check text-emerald-600 mr-1"></i> Score automatically saved to Firebase Leaderboard!`;
+                }).catch((error) => {
+                    console.error("Error saving to Firebase:", error);
+                    document.getElementById('firebase-sync-status').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Saved locally (Offline mode)`;
+                });
+            }
+        }
+
+        function renderLeaderboard() {
+            const listElem = document.getElementById('leaderboard-list');
+            listElem.innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-sm">
+                    <i class="fa-solid fa-circle-notch fa-spin text-saffron text-xl mb-2"></i>
+                    <p>Fetching entries from Firebase...</p>
+                </div>
+            `;
+
+            if(db) {
+                db.collection("quiz_submissions").get().then((snapshot) => {
+                    let entries = [];
+                    snapshot.forEach((doc) => {
+                        entries.push(doc.data());
+                    });
+                    
+                    if(entries.length === 0) {
+                        entries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                    }
+
+                    displayLeaderboardItems(entries);
+                }).catch((err) => {
+                    console.error("Error fetching Firestore leaderboard:", err);
+                    let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                    displayLeaderboardItems(localEntries);
+                });
+            } else {
+                let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                displayLeaderboardItems(localEntries);
+            }
+        }
+
+        function displayLeaderboardItems(entries) {
+            const listElem = document.getElementById('leaderboard-list');
+            listElem.innerHTML = '';
+
+            if(entries.length === 0) {
+                listElem.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No submissions recorded yet. Be the first to attempt!</div>`;
+                return;
+            }
+
+            // TIE-BREAKER RULE: Highest Score First -> Lowest Time Taken Second
+            entries.sort((a, b) => {
+                if(b.score !== a.score) {
+                    return b.score - a.score;
+                }
+                return a.timeSeconds - b.timeSeconds;
+            });
+
+            entries.slice(0, 30).forEach((item, idx) => {
+                let badgeStyle = "bg-slate-100 text-slate-600 border-slate-200";
+                let rankLabel = `#${idx + 1}`;
+
+                if(idx === 0) { badgeStyle = "bg-amber-100 text-amber-800 border-amber-300 font-extrabold"; rankLabel = "🥇 1st"; }
+                else if(idx === 1) { badgeStyle = "bg-slate-200 text-slate-800 border-slate-300 font-extrabold"; rankLabel = "🥈 2nd"; }
+                else if(idx === 2) { badgeStyle = "bg-amber-50 text-amber-900 border-amber-200 font-extrabold"; rankLabel = "🥉 3rd"; }
+
+                const itemHtml = `
+                    <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs text-xs sm:text-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="w-12 h-9 rounded-xl flex items-center justify-center border ${badgeStyle}">${rankLabel}</span>
+                            <div>
+                                <p class="font-extrabold text-slate-900">${item.name}</p>
+                                <p class="text-[11px] text-slate-500">${item.dept ? item.dept + ' • ' : ''}${item.correct}/15 Correct • Time: ${item.timeFormatted}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-black text-slate-900 text-base">${item.score}</span>
+                            <span class="text-[10px] text-slate-400 block font-bold">pts</span>
+                        </div>
+                    </div>
+                `;
+                listElem.innerHTML += itemHtml;
+            });
+        }
+
+        // POPULATE REVIEW MODAL
+        function populateReviewModal() {
+            const listElem = document.getElementById('review-list');
+            listElem.innerHTML = '';
+
+            userAnswersHistory.forEach((item, idx) => {
+                const isCorrect = item.selected === item.correct;
+                const userChoiceText = item.options[item.selected];
+                const correctChoiceText = item.options[item.correct];
+
+                const cardHtml = `
+                    <div class="p-3.5 rounded-2xl ${isCorrect ? 'bg-emerald-50/60 border border-emerald-200' : 'bg-rose-50/60 border border-rose-200'} space-y-1.5">
+                        <p class="font-bold text-slate-900 text-xs sm:text-sm">${idx + 1}. ${item.question}</p>
+                        <div class="text-xs space-y-1 pt-1">
+                            <p class="${isCorrect ? 'text-emerald-700 font-bold' : 'text-rose-700 font-bold'}">
+                                <i class="fa-solid ${isCorrect ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1"></i>
+                                Your Answer: ${userChoiceText}
+                            </p>
+                            ${!isCorrect ? `<p class="text-emerald-800 font-bold"><i class="fa-solid fa-check mr-1"></i>Correct Answer: ${correctChoiceText}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                listElem.innerHTML += cardHtml;
+            });
+        }
+
+        // MODAL CONTROLS
+        function toggleLeaderboardModal(show) {
+            if(show) renderLeaderboard();
+            document.getElementById('modal-leaderboard').classList.toggle('hidden', !show);
+        }
+
+        function toggleReviewModal(show) {
+            document.getElementById('modal-review').classList.toggle('hidden', !show);
+        }
+    </script>
+</body>
+</html>
