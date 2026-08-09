@@ -80,16 +80,16 @@
     <!-- Header Navigation Bar -->
     <header class="w-full bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-2 z-40 px-4 py-3 shadow-sm">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
-            <!-- Branding with College & NSS Logo Placement -->
+            <!-- Branding with College & NSS Logos (Clickable secret admin triggers) -->
             <div class="flex items-center space-x-3">
                 <div class="flex items-center -space-x-1 sm:space-x-2">
                     <!-- College Logo Place -->
-                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-sm cursor-pointer" onclick="handleAdminSecretTrigger()">
+                    <div title="Mahatma Gandhi College, Iritty" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-sm cursor-pointer hover:scale-105 transition transform active:scale-95" onclick="handleAdminSecretTrigger()">
                         <img src="./college-logo.png" alt="MGC Iritty Logo" 
                              class="w-full h-full object-contain p-0.5"
                              onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'text-[10px] font-black text-slate-800 text-center leading-tight\'>MGC</div>';">
                     </div>
-                    <!-- NSS Logo Place (Hidden Admin Trigger: Click 5 times) -->
+                    <!-- NSS Logo Place -->
                     <div title="NSS Units 30 & 63" onclick="handleAdminSecretTrigger()" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-nssBlue border-2 border-amber-400 flex items-center justify-center overflow-hidden shadow-md cursor-pointer hover:scale-105 transition transform active:scale-95">
                         <img src="./nss-logo.png" alt="NSS Logo" 
                              class="w-full h-full object-contain p-0.5"
@@ -116,7 +116,6 @@
             </button>
         </div>
     </header>
-
 
     <!-- Main Content Area -->
     <main class="max-w-3xl mx-auto w-full px-4 py-8 flex-grow flex flex-col justify-center">
@@ -213,7 +212,6 @@
             </form>
         </div>
 
-
         <!-- 2. QUIZ SCREEN -->
         <div id="screen-quiz" class="hidden white-card rounded-3xl p-5 sm:p-8 relative border-t-4 border-t-saffron">
             <!-- Top Status Header -->
@@ -226,12 +224,12 @@
                     </div>
                 </div>
 
-                <!-- Live Stopwatch -->
+                <!-- Live Timer Countdown -->
                 <div class="bg-slate-100 border border-slate-200 px-4 py-1.5 rounded-2xl flex items-center gap-2 shadow-inner">
-                    <i class="fa-solid fa-stopwatch text-indigo-600 text-sm animate-pulse"></i>
+                    <i class="fa-solid fa-clock text-saffron text-sm animate-pulse"></i>
                     <div class="text-right">
-                        <span class="block text-[9px] font-bold text-slate-400 uppercase">Time Elapsed</span>
-                        <span id="timer-text" class="font-mono font-extrabold text-sm text-slate-900">00:00</span>
+                        <span class="block text-[9px] font-bold text-slate-400 uppercase">Time Remaining</span>
+                        <span id="timer-text" class="font-mono font-extrabold text-sm text-slate-900">05:00</span>
                     </div>
                 </div>
 
@@ -263,13 +261,12 @@
             <div class="flex items-center justify-between pt-4 border-t border-slate-200">
                 <span id="participant-display-name" class="text-xs font-bold text-slate-500"></span>
                 <button id="btn-next" onclick="handleNextClick()" disabled
-                    class="bg-slate-200 text-slate-400 font-extrabold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-2 cursor-not-allowed">
+                    class="bg-slate-200 text-slate-400 font-extrabold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-2 cursor-not-allowed opacity-60">
                     <span>Next Question</span>
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
             </div>
         </div>
-
 
         <!-- 3. RESULT SCREEN -->
         <div id="screen-result" class="hidden white-card rounded-3xl p-6 sm:p-10 text-center border-t-4 border-t-emerald-600">
@@ -296,7 +293,7 @@
                     <p id="final-accuracy" class="text-2xl font-black text-indigo-600">0%</p>
                 </div>
                 <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
-                    <p class="text-xs text-slate-500 font-semibold mb-1">Time Elapsed</p>
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Time Taken</p>
                     <p id="final-time" class="text-2xl font-black text-amber-600">00:00</p>
                 </div>
             </div>
@@ -318,38 +315,109 @@
         Organized by <strong>NSS Units 30 & 63</strong> • Mahatma Gandhi College, Iritty
     </footer>
 
-    <!-- MODAL 4: HIDDEN ADMIN DASHBOARD -->
+    <!-- MODAL: ANTI-CHEATING WARNING -->
+    <div id="modal-cheat-warning" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="white-card max-w-md w-full rounded-3xl p-6 text-center space-y-4 border-2 border-rose-500 shadow-2xl">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-2xl mx-auto animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-900">Anti-Cheating Warning!</h3>
+            <p id="cheat-warning-text" class="text-xs text-slate-600 leading-relaxed font-semibold">
+                Tab switching or leaving the browser during the quiz is strictly prohibited.
+            </p>
+            <button onclick="dismissCheatWarning()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                I Understand & Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: LEADERBOARD -->
+    <div id="modal-leaderboard" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="white-card max-w-lg w-full rounded-3xl p-6 relative max-h-[85vh] flex flex-col shadow-2xl border border-slate-200">
+            <button onclick="toggleLeaderboardModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="flex items-center justify-between mb-4 pr-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Live Firebase Leaderboard</h3>
+                        <p class="text-xs text-slate-500">Sorted by highest score & lowest completion time</p>
+                    </div>
+                </div>
+                <button onclick="renderLeaderboard()" title="Refresh Leaderboard" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold transition">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto flex-grow pr-1 space-y-2" id="leaderboard-list">
+                <div class="text-center py-8 text-slate-400 text-sm">
+                    <i class="fa-solid fa-circle-notch fa-spin text-saffron text-xl mb-2"></i>
+                    <p>Fetching entries from Firebase...</p>
+                </div>
+            </div>
+
+            <button onclick="toggleLeaderboardModal(false)" class="mt-4 w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-sm transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: ANSWER KEY REVIEW -->
+    <div id="modal-review" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="white-card max-w-xl w-full rounded-3xl p-6 relative max-h-[85vh] flex flex-col shadow-2xl border border-slate-200">
+            <button onclick="toggleReviewModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <h3 class="text-lg font-bold text-slate-900 mb-1"><i class="fa-solid fa-file-circle-check text-saffron mr-2"></i>Answer Key & Review</h3>
+            <p class="text-xs text-slate-500 mb-4">Review your responses against official correct options:</p>
+
+            <div class="overflow-y-auto flex-grow pr-1 space-y-3 text-sm font-ml" id="review-list">
+                <!-- Dynamic Review -->
+            </div>
+
+            <button onclick="toggleReviewModal(false)" class="mt-4 w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl text-sm transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: HIDDEN ADMIN DASHBOARD -->
     <div id="modal-admin" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
         <div class="white-card max-w-2xl w-full rounded-3xl p-6 relative max-h-[90vh] flex flex-col shadow-2xl border-2 border-amber-400">
             <button onclick="closeAdminModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-800 text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <!-- Admin Authentication Screen -->
+            <!-- Admin Login -->
             <div id="admin-login-screen" class="text-center py-8 space-y-4">
                 <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-2xl mx-auto shadow-inner">
                     <i class="fa-solid fa-user-shield"></i>
                 </div>
                 <div>
                     <h3 class="text-xl font-extrabold text-slate-900">NSS Admin Control Panel</h3>
-                    <p class="text-xs text-slate-500">Enter Admin PIN to manage Firebase server data</p>
+                    <p class="text-xs text-slate-500">Enter Security PIN to manage server submissions</p>
                 </div>
                 <div class="max-w-xs mx-auto space-y-3">
-                    <input type="password" id="admin-pin-input" placeholder="Enter Admin PIN"
+                    <input type="password" id="admin-pin-input" placeholder="Enter PIN"
                         class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2.5 px-4 text-center text-lg font-bold tracking-widest text-slate-900 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                     <p id="admin-error-text" class="text-xs font-bold text-rose-600 hidden">Incorrect PIN! Try again.</p>
                     <button onclick="verifyAdminPin()" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition">
-                        Access Control Panel
+                        Access Dashboard
                     </button>
                 </div>
             </div>
 
-            <!-- Admin Content Dashboard -->
+            <!-- Admin Dashboard -->
             <div id="admin-dashboard-screen" class="hidden flex flex-col h-full space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div class="flex items-center gap-2">
                         <span class="bg-amber-100 text-amber-900 text-xs font-black px-2.5 py-1 rounded-lg border border-amber-300">ADMIN MODE</span>
-                        <h3 class="text-base font-extrabold text-slate-900">Manage Server Submissions</h3>
+                        <h3 class="text-base font-extrabold text-slate-900">Manage Submissions</h3>
                     </div>
                     <div class="flex items-center gap-2">
                         <button onclick="exportSubmissionsCSV()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition">
@@ -361,10 +429,9 @@
                     </div>
                 </div>
 
-                <!-- Admin Stats Strip -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                        <span class="text-slate-500 font-semibold block">Total Entries</span>
+                        <span class="text-slate-500 font-semibold block">Total Submissions</span>
                         <span id="admin-total-entries" class="text-lg font-black text-slate-900">0</span>
                     </div>
                     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
@@ -374,24 +441,22 @@
                     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 col-span-2 sm:col-span-1">
                         <span class="text-slate-500 font-semibold block">Database Status</span>
                         <span class="text-xs font-extrabold text-emerald-600 flex items-center gap-1 mt-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Firebase Live
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Firebase Connected
                         </span>
                     </div>
                 </div>
 
-                <!-- Admin Entries List Table -->
                 <div class="overflow-y-auto flex-grow max-h-[50vh] pr-1 space-y-2" id="admin-entries-list">
-                    <!-- Dynamic Entry Cards with Delete Action -->
+                    <!-- Dynamic Entry Cards -->
                 </div>
             </div>
         </div>
     </div>
 
-
     <!-- JAVASCRIPT APPLICATION LOGIC & FIREBASE -->
     <script>
         /* -------------------------------------------------------------
-           1. FIREBASE INITIALIZATION USING YOUR CREDENTIALS
+           1. FIREBASE INITIALIZATION
         ------------------------------------------------------------- */
         const firebaseConfig = {
             apiKey: "AIzaSyCbHGLK1lfS3mOpqUT09mJZz7y1ls0mIDU",
@@ -403,18 +468,21 @@
             measurementId: "G-81JXMC436H"
         };
 
-        // Initialize Firestore Database Connection
         let db = null;
         try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
-            console.log("Firebase Firestore initialized successfully!");
+            if (typeof firebase !== 'undefined') {
+                if (firebase.apps.length === 0) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.firestore();
+                console.log("Firebase Firestore connected successfully!");
+            }
         } catch(err) {
             console.error("Firebase Initialization Error:", err);
         }
 
         /* -------------------------------------------------------------
-           2. 15 MALAYALAM QUIT INDIA QUIZ QUESTIONS & ACCURATE ANSWERS
+           2. 15 MALAYALAM QUIT INDIA QUIZ QUESTIONS
         ------------------------------------------------------------- */
         const quizQuestions = [
             {
@@ -495,9 +563,9 @@
         ];
 
         /* -------------------------------------------------------------
-           3. STATE VARIABLES & QUIZ FLOW LOGIC
+           3. APP STATE VARIABLES
         ------------------------------------------------------------- */
-        const TOTAL_QUIZ_TIME_SECONDS = 300; // 5 Minutes total countdown
+        const TOTAL_QUIZ_TIME_SECONDS = 300; // 5 Minutes Total Countdown
         let currentQuestionIndex = 0;
         let userScore = 0;
         let correctAnswersCount = 0;
@@ -509,211 +577,15 @@
         let tabSwitchCount = 0;
         let isQuizActive = false;
 
-        // HIDDEN ADMIN LOGIC
-        let adminClickCounter = 0;
-        let adminClickTimer = null;
-        const ADMIN_PIN = "3063"; // Default PIN matching NSS Units 30 & 63
-
-        function handleAdminSecretTrigger() {
-            adminClickCounter++;
-            clearTimeout(adminClickTimer);
-            
-            if (adminClickCounter >= 5) {
-                adminClickCounter = 0;
-                openAdminModal();
-            } else {
-                adminClickTimer = setTimeout(() => {
-                    adminClickCounter = 0;
-                }, 2000);
-            }
-        }
-
-        function openAdminModal() {
-            document.getElementById('admin-pin-input').value = '';
-            document.getElementById('admin-error-text').classList.add('hidden');
-            document.getElementById('admin-login-screen').classList.remove('hidden');
-            document.getElementById('admin-dashboard-screen').classList.add('hidden');
-            document.getElementById('modal-admin').classList.remove('hidden');
-        }
-
-        function closeAdminModal() {
-            document.getElementById('modal-admin').classList.add('hidden');
-        }
-
-        function verifyAdminPin() {
-            const inputPin = document.getElementById('admin-pin-input').value.trim();
-            if (inputPin === ADMIN_PIN) {
-                document.getElementById('admin-login-screen').classList.add('hidden');
-                document.getElementById('admin-dashboard-screen').classList.remove('hidden');
-                loadAdminDashboardData();
-            } else {
-                document.getElementById('admin-error-text').classList.remove('hidden');
-            }
-        }
-
-        function loadAdminDashboardData() {
-            const listElem = document.getElementById('admin-entries-list');
-            listElem.innerHTML = `
-                <div class="text-center py-8 text-slate-400 text-sm">
-                    <i class="fa-solid fa-circle-notch fa-spin text-saffron text-xl mb-2"></i>
-                    <p>Loading entries for admin review...</p>
-                </div>
-            `;
-
-            if (db) {
-                db.collection("quiz_submissions").get().then((snapshot) => {
-                    let entries = [];
-                    snapshot.forEach((doc) => {
-                        let data = doc.data();
-                        data._docId = doc.id; // Store Firestore Document ID
-                        entries.push(data);
-                    });
-                    
-                    if (entries.length === 0) {
-                        entries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
-                    }
-
-                    renderAdminEntries(entries);
-                }).catch((err) => {
-                    console.error("Error fetching admin entries:", err);
-                    let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
-                    renderAdminEntries(localEntries);
-                });
-            } else {
-                let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
-                renderAdminEntries(localEntries);
-            }
-        }
-
-        function renderAdminEntries(entries) {
-            const listElem = document.getElementById('admin-entries-list');
-            listElem.innerHTML = '';
-
-            document.getElementById('admin-total-entries').textContent = entries.length;
-
-            if (entries.length === 0) {
-                listElem.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No test entries in database.</div>`;
-                document.getElementById('admin-top-score').textContent = "0 pts";
-                return;
-            }
-
-            // Sort entries by score
-            entries.sort((a, b) => b.score - a.score || a.timeSeconds - b.timeSeconds);
-            document.getElementById('admin-top-score').textContent = `${entries[0].score} pts`;
-
-            entries.forEach((item, idx) => {
-                const card = document.createElement('div');
-                card.className = "flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs";
-                card.innerHTML = `
-                    <div class="space-y-0.5">
-                        <p class="font-extrabold text-slate-900">${idx + 1}. ${item.name} <span class="text-slate-500 font-normal">(${item.dept || 'N/A'})</span></p>
-                        <p class="text-[11px] text-slate-500">Contact: <strong>${item.contact || 'N/A'}</strong> • Score: <strong class="text-emerald-600">${item.score} pts</strong> (${item.correct}/15) • Time: ${item.timeFormatted}</p>
-                    </div>
-                    <button onclick="deleteSingleEntry('${item._docId || ''}', ${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2.5 py-1.5 rounded-lg font-extrabold transition">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                `;
-                listElem.appendChild(card);
-            });
-        }
-
-        // DELETE SINGLE SUBMISSION
-        function deleteSingleEntry(docId, localIdx) {
-            if (!confirm("Are you sure you want to delete this submission entry?")) return;
-
-            if (db && docId) {
-                db.collection("quiz_submissions").doc(docId).delete().then(() => {
-                    console.log("Document deleted from Firestore:", docId);
-                    loadAdminDashboardData();
-                    renderLeaderboard();
-                }).catch((err) => {
-                    console.error("Firestore delete error:", err);
-                    alert("Could not delete from server. Removing locally.");
-                });
-            }
-
-            // Remove from local storage backup
-            let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
-            localLb.splice(localIdx, 1);
-            localStorage.setItem('mgc_quit_india_lb', JSON.stringify(localLb));
-
-            if (!docId) {
-                loadAdminDashboardData();
-                renderLeaderboard();
-            }
-        }
-
-        // WIPE ALL TEST SUBMISSIONS
-        function clearAllServerData() {
-            if (!confirm("⚠️ WARNING: This will permanently delete ALL test submissions from both server and local storage! Continue?")) return;
-
-            if (db) {
-                db.collection("quiz_submissions").get().then((snapshot) => {
-                    let batch = db.batch();
-                    snapshot.forEach((doc) => {
-                        batch.delete(doc.ref);
-                    });
-                    return batch.commit();
-                }).then(() => {
-                    console.log("All Firestore submissions deleted!");
-                    localStorage.removeItem('mgc_quit_india_lb');
-                    loadAdminDashboardData();
-                    renderLeaderboard();
-                    alert("All test data successfully cleared!");
-                }).catch((err) => {
-                    console.error("Batch delete error:", err);
-                    localStorage.removeItem('mgc_quit_india_lb');
-                    loadAdminDashboardData();
-                });
-            } else {
-                localStorage.removeItem('mgc_quit_india_lb');
-                loadAdminDashboardData();
-            }
-        }
-
-        // EXPORT SUBMISSIONS TO CSV
-        function exportSubmissionsCSV() {
-            let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
-            
-            if (db) {
-                db.collection("quiz_submissions").get().then((snapshot) => {
-                    let entries = [];
-                    snapshot.forEach((doc) => entries.push(doc.data()));
-                    if (entries.length > 0) localLb = entries;
-                    downloadCSVProcess(localLb);
-                }).catch(() => downloadCSVProcess(localLb));
-            } else {
-                downloadCSVProcess(localLb);
-            }
-        }
-
-        function downloadCSVProcess(data) {
-            if (data.length === 0) {
-                alert("No submission data available to export.");
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,Name,Contact,Department,Score,Correct,Time_Taken\n";
-            data.forEach(row => {
-                csvContent += `"${row.name}","${row.contact}","${row.dept}",${row.score},${row.correct},"${row.timeFormatted}"\n`;
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "MGC_Quit_India_Quiz_Results.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         let currentUser = {
             name: '',
             contact: '',
             dept: ''
         };
 
-        // ANTI-CHEATING TAB SWITCH & BLUR LISTENERS
+        /* -------------------------------------------------------------
+           4. ANTI-CHEATING LISTENERS
+        ------------------------------------------------------------- */
         document.addEventListener('visibilitychange', () => {
             if (isQuizActive && document.hidden) {
                 handleCheatingViolation();
@@ -731,7 +603,6 @@
             tabSwitchCount++;
             
             if(tabSwitchCount >= 2) {
-                // Auto submit on second violation
                 alert("Quiz auto-submitted due to repeated tab switching or app backgrounding!");
                 finishQuiz();
             } else {
@@ -744,7 +615,9 @@
             document.getElementById('modal-cheat-warning').classList.add('hidden');
         }
 
-        // START QUIZ
+        /* -------------------------------------------------------------
+           5. QUIZ GAMEPLAY CONTROLLER
+        ------------------------------------------------------------- */
         function startQuiz(event) {
             event.preventDefault();
             const nameInput = document.getElementById('user-name').value.trim();
@@ -787,13 +660,12 @@
                 const secs = String(countdownSecondsLeft % 60).padStart(2, '0');
                 
                 const timerElem = document.getElementById('timer-text');
-                timerElem.textContent = `${mins}:${secs}`;
+                if (timerElem) timerElem.textContent = `${mins}:${secs}`;
 
-                if(countdownSecondsLeft <= 60) {
+                if(countdownSecondsLeft <= 60 && timerElem) {
                     timerElem.classList.add('text-rose-600', 'animate-pulse');
                 }
 
-                // Auto-submit when time expires
                 if(countdownSecondsLeft <= 0) {
                     clearInterval(timerInterval);
                     alert("Time is up! Your quiz is being submitted automatically.");
@@ -802,7 +674,98 @@
             }, 1000);
         }
 
-        // FINISH QUIZ & SYNC TO FIREBASE
+        // LOAD QUESTION & OPTIONS
+        function loadQuestion() {
+            selectedOptionIndex = null;
+            const qData = quizQuestions[currentQuestionIndex];
+
+            // Update Progress Bar
+            const progressPercent = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            const progressBar = document.getElementById('quiz-progress-bar');
+            if (progressBar) progressBar.style.width = `${progressPercent}%`;
+
+            // Update Question Number & Text
+            const curQNumElem = document.getElementById('current-q-num');
+            if (curQNumElem) curQNumElem.textContent = currentQuestionIndex + 1;
+
+            const qTextElem = document.getElementById('question-text');
+            if (qTextElem) qTextElem.textContent = qData.question;
+
+            const scoreElem = document.getElementById('user-score');
+            if (scoreElem) scoreElem.textContent = `${userScore} pts`;
+
+            // Reset Next Button
+            const btnNext = document.getElementById('btn-next');
+            if (btnNext) {
+                btnNext.disabled = true;
+                btnNext.className = "bg-slate-200 text-slate-400 font-extrabold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-2 cursor-not-allowed opacity-60";
+                btnNext.innerHTML = `<span>${currentQuestionIndex === quizQuestions.length - 1 ? 'Submit Quiz' : 'Next Question'}</span><i class="fa-solid fa-chevron-right"></i>`;
+            }
+
+            // Render Malayalam Options Grid
+            const optionsContainer = document.getElementById('options-container');
+            if (optionsContainer) {
+                optionsContainer.innerHTML = '';
+
+                qData.options.forEach((optText, index) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = "option-card bg-white border border-slate-300 text-slate-800 text-sm font-ml font-bold p-4 rounded-2xl text-left flex items-center justify-between w-full shadow-xs cursor-pointer";
+                    btn.onclick = () => selectOption(index, btn);
+                    btn.innerHTML = `
+                        <span class="flex-1 pr-2">${optText}</span>
+                        <span class="w-7 h-7 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-xs text-slate-600 font-sans font-extrabold shrink-0">${String.fromCharCode(65 + index)}</span>
+                    `;
+                    optionsContainer.appendChild(btn);
+                });
+            }
+        }
+
+        // SELECT OPTION
+        function selectOption(index, element) {
+            selectedOptionIndex = index;
+
+            const optionBtns = document.querySelectorAll('#options-container button');
+            optionBtns.forEach(btn => btn.classList.remove('selected'));
+            if (element) element.classList.add('selected');
+
+            // Enable Next Button
+            const btnNext = document.getElementById('btn-next');
+            if (btnNext) {
+                btnNext.disabled = false;
+                btnNext.className = "bg-gradient-to-r from-saffron via-amber-500 to-saffron hover:from-saffron hover:to-amber-600 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center gap-2 cursor-pointer opacity-100 transform active:scale-95";
+            }
+        }
+
+        // NEXT / SUBMIT CLICK
+        function handleNextClick() {
+            if(selectedOptionIndex === null) return;
+
+            const qData = quizQuestions[currentQuestionIndex];
+            const isCorrect = (selectedOptionIndex === qData.answer);
+
+            if(isCorrect) {
+                correctAnswersCount++;
+                userScore += 10;
+            }
+
+            userAnswersHistory.push({
+                question: qData.question,
+                options: qData.options,
+                selected: selectedOptionIndex,
+                correct: qData.answer
+            });
+
+            currentQuestionIndex++;
+
+            if(currentQuestionIndex < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // FINISH QUIZ & SUBMIT RESULTS
         function finishQuiz() {
             isQuizActive = false;
             clearInterval(timerInterval);
@@ -821,7 +784,6 @@
             document.getElementById('final-accuracy').textContent = `${accuracy}%`;
             document.getElementById('final-time').textContent = formattedTime;
 
-            // Trigger Confetti Celebration for high accuracy
             if(accuracy >= 60) {
                 confetti({
                     particleCount: 120,
@@ -830,7 +792,6 @@
                 });
             }
 
-            // Sync to Firebase
             saveToFirebase({
                 name: currentUser.name,
                 contact: currentUser.contact,
@@ -839,36 +800,43 @@
                 correct: correctAnswersCount,
                 timeSeconds: totalElapsedSeconds,
                 timeFormatted: formattedTime,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                timestamp: (typeof firebase !== 'undefined' && firebase.firestore) ? firebase.firestore.FieldValue.serverTimestamp() : Date.now()
             });
 
             populateReviewModal();
         }
 
         /* -------------------------------------------------------------
-           4. FIREBASE PERSISTENCE & LEADERBOARD LOGIC
+           6. FIREBASE PERSISTENCE & LEADERBOARD LOGIC
         ------------------------------------------------------------- */
-        
         function saveToFirebase(entry) {
-            // Local Backup
             let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
             localLb.push(entry);
             localStorage.setItem('mgc_quit_india_lb', JSON.stringify(localLb));
 
-            // Firestore Push
             if(db) {
                 db.collection("quiz_submissions").add(entry).then((docRef) => {
                     console.log("Record successfully added to Firebase Document ID:", docRef.id);
-                    document.getElementById('firebase-sync-status').innerHTML = `<i class="fa-solid fa-cloud-check text-emerald-600 mr-1"></i> Score automatically saved to Firebase Leaderboard!`;
+                    const statusElem = document.getElementById('firebase-sync-status');
+                    if (statusElem) {
+                        statusElem.className = "text-xs font-semibold text-emerald-600 mb-6";
+                        statusElem.innerHTML = `<i class="fa-solid fa-cloud-check mr-1"></i>Score saved to Firebase Leaderboard`;
+                    }
                 }).catch((error) => {
                     console.error("Error saving to Firebase:", error);
-                    document.getElementById('firebase-sync-status').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Saved locally (Offline mode)`;
+                    const statusElem = document.getElementById('firebase-sync-status');
+                    if (statusElem) {
+                        statusElem.className = "text-xs font-semibold text-amber-600 mb-6";
+                        statusElem.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>Saved locally (Offline mode)`;
+                    }
                 });
             }
         }
 
         function renderLeaderboard() {
             const listElem = document.getElementById('leaderboard-list');
+            if (!listElem) return;
+
             listElem.innerHTML = `
                 <div class="text-center py-8 text-slate-400 text-sm">
                     <i class="fa-solid fa-circle-notch fa-spin text-saffron text-xl mb-2"></i>
@@ -901,6 +869,7 @@
 
         function displayLeaderboardItems(entries) {
             const listElem = document.getElementById('leaderboard-list');
+            if (!listElem) return;
             listElem.innerHTML = '';
 
             if(entries.length === 0) {
@@ -908,7 +877,7 @@
                 return;
             }
 
-            // TIE-BREAKER RULE: Highest Score First -> Lowest Time Taken Second
+            // Tie-Breaker: Score DESC -> Time ASC
             entries.sort((a, b) => {
                 if(b.score !== a.score) {
                     return b.score - a.score;
@@ -943,9 +912,9 @@
             });
         }
 
-        // POPULATE REVIEW MODAL
         function populateReviewModal() {
             const listElem = document.getElementById('review-list');
+            if (!listElem) return;
             listElem.innerHTML = '';
 
             userAnswersHistory.forEach((item, idx) => {
@@ -969,7 +938,201 @@
             });
         }
 
-        // MODAL CONTROLS
+        /* -------------------------------------------------------------
+           7. HIDDEN ADMIN PANEL LOGIC
+        ------------------------------------------------------------- */
+        let adminClickCounter = 0;
+        let adminClickTimer = null;
+        const ADMIN_PIN = "3063"; // NSS Units 30 & 63
+
+        function handleAdminSecretTrigger() {
+            adminClickCounter++;
+            clearTimeout(adminClickTimer);
+            
+            if (adminClickCounter >= 5) {
+                adminClickCounter = 0;
+                openAdminModal();
+            } else {
+                adminClickTimer = setTimeout(() => {
+                    adminClickCounter = 0;
+                }, 2000);
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('admin-pin-input').value = '';
+            document.getElementById('admin-error-text').classList.add('hidden');
+            document.getElementById('admin-login-screen').classList.remove('hidden');
+            document.getElementById('admin-dashboard-screen').classList.add('hidden');
+            document.getElementById('modal-admin').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('modal-admin').classList.add('hidden');
+        }
+
+        function verifyAdminPin() {
+            const inputPin = document.getElementById('admin-pin-input').value.trim();
+            if (inputPin === ADMIN_PIN) {
+                document.getElementById('admin-login-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard-screen').classList.remove('hidden');
+                loadAdminDashboardData();
+            } else {
+                document.getElementById('admin-error-text').classList.remove('hidden');
+            }
+        }
+
+        function loadAdminDashboardData() {
+            const listElem = document.getElementById('admin-entries-list');
+            if (!listElem) return;
+
+            listElem.innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-sm">
+                    <i class="fa-solid fa-circle-notch fa-spin text-saffron text-xl mb-2"></i>
+                    <p>Loading entries for admin review...</p>
+                </div>
+            `;
+
+            if (db) {
+                db.collection("quiz_submissions").get().then((snapshot) => {
+                    let entries = [];
+                    snapshot.forEach((doc) => {
+                        let data = doc.data();
+                        data._docId = doc.id;
+                        entries.push(data);
+                    });
+                    
+                    if (entries.length === 0) {
+                        entries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                    }
+
+                    renderAdminEntries(entries);
+                }).catch((err) => {
+                    console.error("Error fetching admin entries:", err);
+                    let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                    renderAdminEntries(localEntries);
+                });
+            } else {
+                let localEntries = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+                renderAdminEntries(localEntries);
+            }
+        }
+
+        function renderAdminEntries(entries) {
+            const listElem = document.getElementById('admin-entries-list');
+            if (!listElem) return;
+            listElem.innerHTML = '';
+
+            document.getElementById('admin-total-entries').textContent = entries.length;
+
+            if (entries.length === 0) {
+                listElem.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No submissions in database.</div>`;
+                document.getElementById('admin-top-score').textContent = "0 pts";
+                return;
+            }
+
+            entries.sort((a, b) => b.score - a.score || a.timeSeconds - b.timeSeconds);
+            document.getElementById('admin-top-score').textContent = `${entries[0].score} pts`;
+
+            entries.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = "flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs";
+                card.innerHTML = `
+                    <div class="space-y-0.5">
+                        <p class="font-extrabold text-slate-900">${idx + 1}. ${item.name} <span class="text-slate-500 font-normal">(${item.dept || 'N/A'})</span></p>
+                        <p class="text-[11px] text-slate-500">Contact: <strong>${item.contact || 'N/A'}</strong> • Score: <strong class="text-emerald-600">${item.score} pts</strong> (${item.correct}/15) • Time: ${item.timeFormatted}</p>
+                    </div>
+                    <button onclick="deleteSingleEntry('${item._docId || ''}', ${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2.5 py-1.5 rounded-lg font-extrabold transition">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                `;
+                listElem.appendChild(card);
+            });
+        }
+
+        function deleteSingleEntry(docId, localIdx) {
+            if (!confirm("Are you sure you want to delete this submission entry?")) return;
+
+            if (db && docId) {
+                db.collection("quiz_submissions").doc(docId).delete().then(() => {
+                    loadAdminDashboardData();
+                    renderLeaderboard();
+                }).catch((err) => {
+                    console.error("Firestore delete error:", err);
+                });
+            }
+
+            let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+            localLb.splice(localIdx, 1);
+            localStorage.setItem('mgc_quit_india_lb', JSON.stringify(localLb));
+
+            if (!docId) {
+                loadAdminDashboardData();
+                renderLeaderboard();
+            }
+        }
+
+        function clearAllServerData() {
+            if (!confirm("⚠️ WARNING: This will permanently delete ALL submissions! Continue?")) return;
+
+            if (db) {
+                db.collection("quiz_submissions").get().then((snapshot) => {
+                    let batch = db.batch();
+                    snapshot.forEach((doc) => {
+                        batch.delete(doc.ref);
+                    });
+                    return batch.commit();
+                }).then(() => {
+                    localStorage.removeItem('mgc_quit_india_lb');
+                    loadAdminDashboardData();
+                    renderLeaderboard();
+                }).catch((err) => {
+                    console.error("Batch delete error:", err);
+                    localStorage.removeItem('mgc_quit_india_lb');
+                    loadAdminDashboardData();
+                });
+            } else {
+                localStorage.removeItem('mgc_quit_india_lb');
+                loadAdminDashboardData();
+            }
+        }
+
+        function exportSubmissionsCSV() {
+            let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
+            
+            if (db) {
+                db.collection("quiz_submissions").get().then((snapshot) => {
+                    let entries = [];
+                    snapshot.forEach((doc) => entries.push(doc.data()));
+                    if (entries.length > 0) localLb = entries;
+                    downloadCSVProcess(localLb);
+                }).catch(() => downloadCSVProcess(localLb));
+            } else {
+                downloadCSVProcess(localLb);
+            }
+        }
+
+        function downloadCSVProcess(data) {
+            if (data.length === 0) {
+                alert("No submission data available to export.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Name,Contact,Department,Score,Correct,Time_Taken\n";
+            data.forEach(row => {
+                csvContent += `"${row.name}","${row.contact}","${row.dept}",${row.score},${row.correct},"${row.timeFormatted}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "MGC_Quit_India_Quiz_Results.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // MODAL TOGGLES
         function toggleLeaderboardModal(show) {
             if(show) renderLeaderboard();
             document.getElementById('modal-leaderboard').classList.toggle('hidden', !show);
