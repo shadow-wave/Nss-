@@ -145,9 +145,14 @@
                 </span>
             </div>
 
-            <div class="text-center mb-8">
+            <div class="text-center mb-6">
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Quit India Movement Quiz</h2>
                 <p class="text-sm text-slate-600 max-w-lg mx-auto">Organized by <strong>NSS Units 30 & 63</strong>, Mahatma Gandhi College, Iritty to commemorate the historic 1942 movement.</p>
+            </div>
+
+            <!-- TIME LOCK COUNTDOWN BANNER -->
+            <div id="time-status-card" class="mb-6 p-4 rounded-2xl border text-center transition-all">
+                <!-- Dynamic Content injected via JS: Countdown / Live Status / Closed Notice -->
             </div>
 
             <!-- Rules Box -->
@@ -205,8 +210,8 @@
                     </div>
                 </div>
 
-                <button type="submit" 
-                    class="w-full mt-3 bg-gradient-to-r from-saffron via-amber-500 to-saffron hover:from-saffron hover:to-amber-600 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-saffron/25 transition transform active:scale-[0.99] text-sm tracking-wide">
+                <button type="submit" id="btn-start-quiz"
+                    class="w-full mt-3 bg-gradient-to-r from-saffron via-amber-500 to-saffron hover:from-saffron hover:to-amber-600 text-white font-extrabold py-3.5 rounded-xl shadow-lg shadow-saffron/25 transition transform active:scale-[0.99] text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed">
                     Start Quiz Competition <i class="fa-solid fa-arrow-right ml-2"></i>
                 </button>
             </form>
@@ -420,6 +425,9 @@
                         <h3 class="text-base font-extrabold text-slate-900">Manage Submissions</h3>
                     </div>
                     <div class="flex items-center gap-2">
+                        <button onclick="toggleAdminTimeOverride()" id="btn-toggle-time-override" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                            <i class="fa-solid fa-clock mr-1"></i> Time Override: OFF
+                        </button>
                         <button onclick="exportSubmissionsCSV()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition">
                             <i class="fa-solid fa-file-csv mr-1"></i> Export CSV
                         </button>
@@ -563,9 +571,9 @@
         ];
 
         /* -------------------------------------------------------------
-           3. APP STATE VARIABLES
+           3. APP STATE & TIME LOCK AUTOMATION
         ------------------------------------------------------------- */
-        const TOTAL_QUIZ_TIME_SECONDS = 300; // 5 Minutes Total Countdown
+        const TOTAL_QUIZ_TIME_SECONDS = 300; // 5 Minutes Countdown
         let currentQuestionIndex = 0;
         let userScore = 0;
         let correctAnswersCount = 0;
@@ -574,8 +582,10 @@
         let totalElapsedSeconds = 0;
         let countdownSecondsLeft = TOTAL_QUIZ_TIME_SECONDS;
         let timerInterval = null;
+        let timeLockCheckInterval = null;
         let tabSwitchCount = 0;
         let isQuizActive = false;
+        let adminTimeOverride = false;
 
         let currentUser = {
             name: '',
@@ -584,7 +594,91 @@
         };
 
         /* -------------------------------------------------------------
-           4. ANTI-CHEATING LISTENERS
+           4. TIME LOCK SYSTEM (6:00 PM TO 10:00 PM AUTOMATION)
+        ------------------------------------------------------------- */
+        function checkQuizTimeStatus() {
+            if (adminTimeOverride) {
+                return 'ACTIVE';
+            }
+
+            const now = new Date();
+            const startWindow = new Date();
+            startWindow.setHours(18, 0, 0, 0); // 6:00 PM today
+
+            const endWindow = new Date();
+            endWindow.setHours(22, 0, 0, 0); // 10:00 PM today
+
+            if (now < startWindow) {
+                return 'BEFORE';
+            } else if (now >= startWindow && now <= endWindow) {
+                return 'ACTIVE';
+            } else {
+                return 'CLOSED';
+            }
+        }
+
+        function updateTimeLockUI() {
+            const status = checkQuizTimeStatus();
+            const cardElem = document.getElementById('time-status-card');
+            const submitBtn = document.getElementById('btn-start-quiz');
+
+            if (!cardElem || !submitBtn) return;
+
+            if (status === 'BEFORE') {
+                const now = new Date();
+                const startWindow = new Date();
+                startWindow.setHours(18, 0, 0, 0);
+                const diffMs = startWindow - now;
+
+                const hrs = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
+                const mins = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                const secs = String(Math.floor((diffMs % (1000 * 60)) / 1000)).padStart(2, '0');
+
+                cardElem.className = "mb-6 p-4 rounded-2xl border border-amber-300 bg-amber-50/80 text-amber-900 text-center";
+                cardElem.innerHTML = `
+                    <div class="flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider mb-1 text-amber-800">
+                        <i class="fa-solid fa-clock text-amber-600 animate-spin"></i> Quiz Opens Automatically at 06:00 PM
+                    </div>
+                    <p class="text-xs text-amber-700 mb-2">Registration will activate when the countdown finishes:</p>
+                    <div class="font-mono text-2xl font-black text-amber-900 tracking-widest">${hrs}:${mins}:${secs}</div>
+                `;
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-lock mr-2"></i> Registration Opens at 06:00 PM`;
+            } else if (status === 'ACTIVE') {
+                cardElem.className = "mb-6 p-4 rounded-2xl border border-emerald-300 bg-emerald-50/80 text-emerald-900 text-center";
+                cardElem.innerHTML = `
+                    <div class="flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-800">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        Quiz Contest is LIVE NOW!
+                    </div>
+                    <p class="text-xs text-emerald-700 mt-1">Available today until 10:00 PM. Enter your details below to start.</p>
+                `;
+
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `Start Quiz Competition <i class="fa-solid fa-arrow-right ml-2"></i>`;
+            } else if (status === 'CLOSED') {
+                cardElem.className = "mb-6 p-4 rounded-2xl border border-rose-300 bg-rose-50/80 text-rose-900 text-center";
+                cardElem.innerHTML = `
+                    <div class="flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider mb-1 text-rose-800">
+                        <i class="fa-solid fa-circle-xmark text-rose-600"></i> Quiz Competition Closed
+                    </div>
+                    <p class="text-xs text-rose-700">The quiz window ended at 10:00 PM today. Thank you for your support!</p>
+                `;
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-ban mr-2"></i> Contest Ended for Today`;
+            }
+        }
+
+        // Initialize Time Lock Loop
+        window.addEventListener('DOMContentLoaded', () => {
+            updateTimeLockUI();
+            timeLockCheckInterval = setInterval(updateTimeLockUI, 1000);
+        });
+
+        /* -------------------------------------------------------------
+           5. ANTI-CHEATING LISTENERS
         ------------------------------------------------------------- */
         document.addEventListener('visibilitychange', () => {
             if (isQuizActive && document.hidden) {
@@ -616,10 +710,19 @@
         }
 
         /* -------------------------------------------------------------
-           5. QUIZ GAMEPLAY CONTROLLER
+           6. QUIZ GAMEPLAY CONTROLLER
         ------------------------------------------------------------- */
         function startQuiz(event) {
             event.preventDefault();
+
+            if (checkQuizTimeStatus() === 'BEFORE') {
+                alert("Quiz is locked until 06:00 PM!");
+                return;
+            } else if (checkQuizTimeStatus() === 'CLOSED') {
+                alert("Quiz competition ended at 10:00 PM!");
+                return;
+            }
+
             const nameInput = document.getElementById('user-name').value.trim();
             const contactInput = document.getElementById('user-contact').value.trim();
             const deptInput = document.getElementById('user-dept').value.trim();
@@ -807,7 +910,7 @@
         }
 
         /* -------------------------------------------------------------
-           6. FIREBASE PERSISTENCE & LEADERBOARD LOGIC
+           7. FIREBASE PERSISTENCE & LEADERBOARD LOGIC
         ------------------------------------------------------------- */
         function saveToFirebase(entry) {
             let localLb = JSON.parse(localStorage.getItem('mgc_quit_india_lb') || '[]');
@@ -939,7 +1042,7 @@
         }
 
         /* -------------------------------------------------------------
-           7. HIDDEN ADMIN PANEL LOGIC
+           8. HIDDEN ADMIN PANEL LOGIC
         ------------------------------------------------------------- */
         let adminClickCounter = 0;
         let adminClickTimer = null;
@@ -980,6 +1083,16 @@
             } else {
                 document.getElementById('admin-error-text').classList.remove('hidden');
             }
+        }
+
+        function toggleAdminTimeOverride() {
+            adminTimeOverride = !adminTimeOverride;
+            const btn = document.getElementById('btn-toggle-time-override');
+            if (btn) {
+                btn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> Time Override: ${adminTimeOverride ? 'ON (TEST)' : 'OFF'}`;
+                btn.className = adminTimeOverride ? "bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition" : "bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold transition";
+            }
+            updateTimeLockUI();
         }
 
         function loadAdminDashboardData() {
